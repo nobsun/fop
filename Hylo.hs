@@ -30,6 +30,9 @@ single [] = False
 single (x:[]) = True
 single (x:xs) = False
 
+mapTree :: (a -> b) -> Tree a -> Tree b
+mapTree f = fold (Leaf . f) Node
+
 ----------------------------------------------------------
 
 split xs = [take n xs, drop n xs] where n = length xs `div` 2
@@ -50,26 +53,42 @@ minors (x:xs) = map (x:) (minors xs) ++ [xs]
 
 ----------------------------------------------------------
 
-type Layer a = [a]
-
 mkNexus :: ([a] -> b) -> ([b] -> b) -> [a] -> b
 mkNexus f g = label . extractL . until singleL (stepL g) . initialL f
+
+initialL :: ([a] -> b) -> [a] -> Layer (LTree b)
+stepL :: ([b] -> b) -> Layer (LTree b) -> Layer (LTree b)
+singleL :: Layer (LTree b) -> Bool
+extractL :: Layer (LTree b) -> LTree b
+
+-- common
+
+type Layer a = [a]
 
 wrap :: a -> [a]
 wrap x = [x]
 
-initialL :: ([a] -> b) -> [a] -> Layer (LTree b)
-initialL f = map (lleaf f . wrap)
-
-singleL :: Layer (LTree b) -> Bool
-singleL = single
-
-extractL :: Layer (LTree b) -> LTree b
-extractL = head
-
-stepL :: ([b] -> b) -> Layer (LTree b) -> Layer (LTree b)
-stepL g = map (lnode g) . group
+-- h = split
 
 group :: [a] -> [[a]]
 group [] = []
 group (x:y:xs) = [x,y]:group xs
+
+initialL f = map (lleaf f . wrap)
+stepL g = map (lnode g) . group
+singleL = single
+extractL = head
+
+-- h = isegs
+{-
+group :: [a] -> [[a]]
+group [x] = []
+group (x:y:xs) = [x,y]:group (y:xs)
+-}
+-- h = minors
+{--
+group :: [a] -> [[a]]
+group [x] = []
+group (x:xs) = map (bind x) xs ++ group xs
+  where bind x y = [x,y]
+--}
