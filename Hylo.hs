@@ -29,3 +29,21 @@ mkTree h = unfold single id h
 single [] = False
 single (x:[]) = True
 single (x:xs) = False
+
+----------------------------------------------------------
+
+split xs = [take n xs, drop n xs] where n = length xs `div` 2
+
+----------------------------------------------------------
+isegs xs = [init xs, tail xs]
+
+recover :: [[a]] -> [a]
+recover xss = head (head xss) : last xss
+
+{-# RULES
+  "recover/isegs" forall xs. recover (isegs xs) = xs
+  #-}
+
+----------------------------------------------------------
+minors [x,y] = [[x],[y]]
+minors (x:xs) = map (x:) (minors xs) ++ [xs]
