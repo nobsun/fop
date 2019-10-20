@@ -47,3 +47,29 @@ recover xss = head (head xss) : last xss
 ----------------------------------------------------------
 minors [x,y] = [[x],[y]]
 minors (x:xs) = map (x:) (minors xs) ++ [xs]
+
+----------------------------------------------------------
+
+type Layer a = [a]
+
+mkNexus :: ([a] -> b) -> ([b] -> b) -> [a] -> b
+mkNexus f g = label . extractL . until singleL (stepL g) . initialL f
+
+wrap :: a -> [a]
+wrap x = [x]
+
+initialL :: ([a] -> b) -> [a] -> Layer (LTree b)
+initialL f = map (lleaf f . wrap)
+
+singleL :: Layer (LTree b) -> Bool
+singleL = single
+
+extractL :: Layer (LTree b) -> LTree b
+extractL = head
+
+stepL :: ([b] -> b) -> Layer (LTree b) -> Layer (LTree b)
+stepL g = map (lnode g) . group
+
+group :: [a] -> [[a]]
+group [] = []
+group (x:y:xs) = [x,y]:group xs
