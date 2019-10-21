@@ -26,6 +26,7 @@ label (LNode x ts) = x
 hylo :: ([a] -> b) -> ([b] -> b) -> ([a] -> [[a]]) -> [a] -> b
 hylo f g h = fold f g . mkTree h
 
+mkTree :: ([a] -> [[a]]) -> [a] -> Tree [a]
 mkTree h = unfold single id h
 
 single [] = False
@@ -37,9 +38,12 @@ mapTree f = fold (Leaf . f) Node
 
 ----------------------------------------------------------
 
+split :: [a] -> [[a]]
 split xs = [take n xs, drop n xs] where n = length xs `div` 2
 
 ----------------------------------------------------------
+
+isegs :: [a] -> [[a]]
 isegs xs = [init xs, tail xs]
 
 recover :: [[a]] -> [a]
@@ -50,6 +54,8 @@ recover xss = head (head xss) : last xss
   #-}
 
 ----------------------------------------------------------
+
+minors :: [a] -> [[a]]
 minors [x,y] = [[x],[y]]
 minors (x:xs) = map (x:) (minors xs) ++ [xs]
 
