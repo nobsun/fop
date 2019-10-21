@@ -14,10 +14,12 @@ data LTree a = LLeaf a | LNode a [LTree a] deriving (Show, Eq)
 
 fill :: (a -> b) -> ([b] -> b) -> Tree a -> LTree b
 fill f g = fold (lleaf f) (lnode g)
+-- fill f g = fold (LLeaf . f) (LNode <$> g . map label <*> id)
 
 lleaf f x = LLeaf (f x)
 lnode g ts = LNode (g (map label ts)) ts
 
+label :: LTree a -> a
 label (LLeaf x) = x
 label (LNode x ts) = x
 
@@ -85,6 +87,7 @@ group :: [a] -> [[a]]
 group [x] = []
 group (x:y:xs) = [x,y]:group (y:xs)
 -}
+
 -- h = minors
 {--
 group :: [a] -> [[a]]
