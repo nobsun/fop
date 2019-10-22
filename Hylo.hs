@@ -51,7 +51,7 @@ instance Functor Tree where
 instance Applicative Tree where
   pure = Leaf
   Leaf f <*> tra = f <$> tra
-  Node fs <*> tra = undefined -- ??
+  Node fs <*> tra = Node [f <*> tra| f <- fs]
 
 instance Monad Tree where
   m >>= f = join $ fmap f m
