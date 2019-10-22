@@ -33,8 +33,29 @@ single [] = False
 single (x:[]) = True
 single (x:xs) = False
 
+-- map f = (| α . F (f, id) |) = (|[Leaf, Node] . (f + id)|) = (|Leaf . f, Node|)
 mapTree :: (a -> b) -> Tree a -> Tree b
 mapTree f = fold (Leaf . f) Node
+
+
+-- F_A(B) = A + G(B) <= ( G(B) = [] A )
+-- φ = α . inl = [Leaf, Node] . inl = Leaf
+-- pure = Leaf
+-- ψ = (|id, α . inr|) = (|id, [Leaf, Node] . inr|) = (|id, Node|)
+join :: Tree (Tree a) -> Tree a
+join = fold id Node
+
+instance Functor Tree where
+  fmap = mapTree
+
+instance Applicative Tree where
+  pure = Leaf
+  Leaf f <*> tra = f <$> tra
+  Node fs <*> tra = undefined -- ??
+
+instance Monad Tree where
+  m >>= f = join $ fmap f m
+
 
 ----------------------------------------------------------
 
