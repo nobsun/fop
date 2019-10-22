@@ -71,13 +71,13 @@ extractL :: Layer (LTree b) -> LTree b
 
 -- common
 
-type Layer a = [a]
+-- type Layer a = [a]
 
 wrap :: a -> [a]
 wrap x = [x]
 
 -- h = split
-
+{-
 group :: [a] -> [[a]]
 group [] = []
 group (x:y:xs) = [x,y]:group xs
@@ -86,7 +86,7 @@ initialL f = map (lleaf f . wrap)
 stepL g = map (lnode g) . group
 singleL = single
 extractL = head
-
+-}
 -- h = isegs
 {-
 group :: [a] -> [[a]]
@@ -95,9 +95,27 @@ group (x:y:xs) = [x,y]:group (y:xs)
 -}
 
 -- h = minors
-{--
+
+type Layer a = [Tree a]
+
+{-
 group :: [a] -> [[a]]
 group [x] = []
 group (x:xs) = map (bind x) xs ++ group xs
   where bind x y = [x,y]
---}
+-}
+
+group :: [Tree a] -> [Tree [a]]
+group [t] = []
+group (Leaf x:vs) = Node [Leaf [x,y] | Leaf y <- vs]:group vs
+group (Node us:vs) = Node (zipWith combine (group us) vs):group vs
+
+combine (Leaf xs) (Leaf x) = Leaf (xs ++ [x])
+combine (Node us) (Node vs) = Node (zipWith combine us vs)
+
+initialL f = map (Leaf . lleaf f . wrap)
+singleL = single
+extractL = extract . head
+  where extract (Leaf x) = x
+        extract (Node [t]) = extract t
+stepL g = map (mapTree (lnode g)) . group
