@@ -40,21 +40,21 @@ mapTree f = fold (Leaf . f) Node
 
 -- F_A(B) = A + G(B) <= ( G(B) = [] A )
 -- φ = α . inl = [Leaf, Node] . inl = Leaf
--- pure = Leaf
+eta = Leaf
 -- ψ = (|id, α . inr|) = (|id, [Leaf, Node] . inr|) = (|id, Node|)
-join :: Tree (Tree a) -> Tree a
-join = fold id Node
+mu :: Tree (Tree a) -> Tree a
+mu = fold id Node
 
 instance Functor Tree where
   fmap = mapTree
 
 instance Applicative Tree where
   pure = Leaf
-  Leaf f <*> tra = f <$> tra
+  Leaf f <*> tra = fmap f tra
   Node fs <*> tra = Node [f <*> tra| f <- fs]
 
 instance Monad Tree where
-  m >>= f = join $ fmap f m
+  m >>= f = mu $ fmap f m
 
 
 ----------------------------------------------------------
