@@ -3,8 +3,10 @@ module Hylo where
 data Tree a = Leaf a | Node [Tree a] deriving (Show, Eq)
 
 fold :: (a -> b) -> ([b] -> b) -> Tree a -> b
-fold f g (Leaf x) = f x
-fold f g (Node ts) = g (map (fold f g) ts)
+fold f g = u
+  where
+    u (Leaf x) = f x
+    u (Node ts) = g (map u ts)
   
 unfold :: (b -> Bool) -> (b -> a) -> (b -> [b]) -> b -> Tree a
 unfold p v h x = if p x then Leaf (v x)
@@ -50,8 +52,8 @@ instance Functor Tree where
 
 instance Applicative Tree where
   pure = Leaf
-  (<*>) (Leaf f) = fmap f
-  (<*>) (Node fs) = Node . flip fmap fs . flip (<*>)
+  (<*>) (Leaf f) tra = fmap f tra
+  (<*>) (Node fs) tra = Node (fmap (<*> tra) fs)
 
 instance Monad Tree where
   m >>= f = mu $ fmap f m
