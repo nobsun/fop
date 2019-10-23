@@ -37,7 +37,7 @@ single (x:xs) = False
 
 -- map f = (| α . F (f, id) |) = (|[Leaf, Node] . (f + id)|) = (|Leaf . f, Node|)
 mapTree :: (a -> b) -> Tree a -> Tree b
-mapTree f = fold (Leaf . f) Node
+mapTree f = fold (eta . f) Node
 
 
 -- F_A(B) = A + G(B) <= ( G(B) = [] A )
@@ -51,12 +51,12 @@ instance Functor Tree where
   fmap = mapTree
 
 instance Applicative Tree where
-  pure = Leaf
+  pure = eta
   -- (<*> tra) = fold (<$> tra) Node
   fs <*> tra = fold (<$> tra) Node fs
 
 instance Monad Tree where
-  m >>= f = mu $ fmap f m
+  m >>= f = mu (f <$> m)
 
 
 ----------------------------------------------------------
