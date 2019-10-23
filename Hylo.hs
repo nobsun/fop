@@ -52,7 +52,7 @@ instance Functor Tree where
 
 instance Applicative Tree where
   pure = Leaf
-  (<*> tra) (Leaf f) = f <$> tra
+  (<*> tra) (Leaf f) = (<$> tra) f
   (<*> tra) (Node fs) = Node (map (<*> tra) fs)
 
 instance Monad Tree where
