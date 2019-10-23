@@ -52,8 +52,8 @@ instance Functor Tree where
 
 instance Applicative Tree where
   pure = Leaf
-  (<*>) (Leaf f) tra = fmap f tra
-  (<*>) (Node fs) tra = Node (fmap (<*> tra) fs)
+  (<*> tra) (Leaf f) = fmap f tra
+  (<*> tra) (Node fs) = Node (fmap (<*> tra) fs)
 
 instance Monad Tree where
   m >>= f = mu $ fmap f m
