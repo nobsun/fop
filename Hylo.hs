@@ -40,7 +40,7 @@ mapTree :: (a -> b) -> Tree a -> Tree b
 mapTree f = fold (eta . f) Node
 
 
--- F_A(B) = A + G(B) <= ( G(B) = [] A )
+-- F_A(B) = A + G(B) <= ( G(B) = [] B )
 -- φ = α . inl = [Leaf, Node] . inl = Leaf
 eta = Leaf
 -- ψ = (|id, α . inr|) = (|id, [Leaf, Node] . inr|) = (|id, Node|)
@@ -48,7 +48,8 @@ mu :: Tree (Tree a) -> Tree a
 mu = fold id Node
 
 instance Functor Tree where
-  fmap = mapTree
+  -- fmap = (|Leaf . f, Node|) = mapTree
+  fmap f = fold (Leaf . f) Node
 
 instance Applicative Tree where
   pure = eta
