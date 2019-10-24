@@ -42,6 +42,7 @@ mapTree f = fold (eta . f) Node
 
 -- F_A(B) = A + G(B) <= ( G(B) = [] B )
 -- φ = α . inl = [Leaf, Node] . inl = Leaf
+eta :: a -> Tree a
 eta = Leaf
 -- ψ = (|id, α . inr|) = (|id, [Leaf, Node] . inr|) = (|id, Node|)
 mu :: Tree (Tree a) -> Tree a
