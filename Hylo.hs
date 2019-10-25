@@ -31,9 +31,8 @@ hylo f g h = fold f g . mkTree h
 mkTree :: ([a] -> [[a]]) -> [a] -> Tree [a]
 mkTree h = unfold single id h
 
-single [] = False
 single (x:[]) = True
-single (x:xs) = False
+single _ = False
 
 -- map f = (| α . F (f, id) |) = (|[Leaf, Node] . (f + id)|) = (|Leaf . f, Node|)
 mapTree :: (a -> b) -> Tree a -> Tree b
