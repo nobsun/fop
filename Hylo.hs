@@ -136,6 +136,7 @@ group [t] = []
 group (Leaf x:vs) = Node [Leaf [x,y] | Leaf y <- vs]:group vs
 group (Node us:vs) = Node (zipWith combine (group us) vs):group vs
 
+combine :: Tree [a] -> Tree a -> Tree [a]
 combine (Leaf xs) (Leaf x) = Leaf (xs ++ [x])
 combine (Node us) (Node vs) = Node (zipWith combine us vs)
 
