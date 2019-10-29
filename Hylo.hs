@@ -18,7 +18,9 @@ fill :: (a -> b) -> ([b] -> b) -> Tree a -> LTree b
 fill f g = fold (lleaf f) (lnode g)
 -- fill f g = fold (LLeaf . f) (LNode <$> g . map label <*> id)
 
+lleaf :: (t -> a) -> t -> LTree a
 lleaf f x = LLeaf (f x)
+lnode :: ([a] -> a) -> [LTree a] -> LTree a
 lnode g ts = LNode (g (map label ts)) ts
 
 label :: LTree a -> a
