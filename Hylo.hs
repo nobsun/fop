@@ -7,6 +7,11 @@ fold f g = u
   where
     u (Leaf x) = f x
     u (Node ts) = g (map u ts)
+
+leaf :: a -> Tree a
+leaf = Leaf
+node :: [Tree a] -> Tree a
+node = Node
   
 unfold :: (b -> Bool) -> (b -> a) -> (b -> [b]) -> b -> Tree a
 unfold p v h x = if p x then Leaf (v x)
