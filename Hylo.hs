@@ -153,3 +153,7 @@ extractL = extract . head
         extract (Node [t]) = extract t
 stepL g = map (mapTree (lnode g)) . group
 
+uncats :: [a] -> [([a],[a])]
+uncats [x,y] = [([x], [y])]
+uncats (x:xs) = ([x], xs) : map (cons x) (uncats xs)
+  where cons x (ys, zs) = (x:ys, zs)
