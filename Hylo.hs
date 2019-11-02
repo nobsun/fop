@@ -149,8 +149,9 @@ combine (Node us) (Node vs) = Node (zipWith combine us vs)
 initialL f = map (Leaf . lleaf f . wrap)
 singleL = single
 extractL = extract . head
-  where extract (Leaf x) = x
-        extract (Node [t]) = extract t
+  where
+    extract (Leaf x) = x
+    extract (Node [t]) = extract t
 stepL g = map (mapTree (lnode g)) . group
 
 uncats :: [a] -> [([a],[a])]
