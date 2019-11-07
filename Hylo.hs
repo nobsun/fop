@@ -8,6 +8,13 @@ fold f g = u
     u (Leaf x) = f x
     u (Node ts) = g (map u ts)
 
+para :: (a -> b) -> ([(Tree a, b)] -> b) -> Tree a -> b
+para g h = u
+  where
+    (f1 &&& f2) x = (f1 x, f2 x)
+    u (Leaf x) = g x
+    u (Node ts) = h (map (id &&& u) ts)
+
 leaf :: a -> Tree a
 leaf = Leaf
 node :: [Tree a] -> Tree a
@@ -106,7 +113,7 @@ extractL :: Layer (LTree b) -> LTree b
 -- type Layer a = [a]
 
 wrap :: a -> [a]
-wrap x = [x]
+wrap = (:[])
 
 -- h = split
 {-
