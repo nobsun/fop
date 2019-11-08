@@ -100,8 +100,8 @@ minors (x:xs) = map (x:) (minors xs) ++ [xs]
 ----------------------------------------------------------
 
 mkNexus :: ([a] -> b) -> ([b] -> b) -> [a] -> b
--- mkNexus f g = label . extractL . until singleL (stepL g) . initialL f
-mkNexus f g = label . fill f g . mkTree minors
+mkNexus f g = label . extractL . until singleL (stepL g) . initialL f
+-- mkNexus f g = label . fill f g . mkTree minors
 
 initialL :: ([a] -> b) -> [a] -> Layer (LTree b)
 stepL :: ([b] -> b) -> Layer (LTree b) -> Layer (LTree b)
