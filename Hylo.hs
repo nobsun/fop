@@ -158,8 +158,6 @@ singleL = single
 extractL = extract . head
   where
     extract = para id (snd . head)
-    -- extract (Leaf x) = x
-    -- extract (Node [t]) = extract t
 stepL g = map (mapTree (lnode g)) . group
 
 uncats :: [a] -> [([a],[a])]
