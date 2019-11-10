@@ -81,9 +81,11 @@ split xs = [take n xs, drop n xs] where n = length xs `div` 2
 
 ----------------------------------------------------------
 
+{-# INLINE[1] isegs #-}
 isegs :: [a] -> [[a]]
 isegs xs = [init xs, tail xs]
 
+{-# INLINE[1] recover #-}
 recover :: [[a]] -> [a]
 recover xss = head (head xss) : last xss
 
