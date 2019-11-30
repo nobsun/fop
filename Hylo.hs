@@ -166,3 +166,5 @@ uncats :: [a] -> [([a],[a])]
 uncats [x,y] = [([x], [y])]
 uncats (x:xs) = ([x], xs) : map (cons x) (uncats xs)
   where cons x (ys, zs) = (x:ys, zs)
+
+ex1 = mkNexus id concat "abcd"
