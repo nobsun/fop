@@ -177,3 +177,13 @@ insertSort' = cata (apo (swop . fmap (pair (id, out))))
 
 selectSort :: Fix (ListF Int) -> Fix (SListF Int)
 selectSort = ana (para (fmap (either id In) . swop))
+
+-- Utilities
+toList :: [a] -> List a
+toList = foldr cons nil
+
+fromList :: List a -> [a]
+fromList = unfoldr psi
+  where
+    psi (In Nil) = Nothing
+    psi (In (Cons x xs)) = Just (x, xs)
