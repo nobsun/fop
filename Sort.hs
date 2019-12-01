@@ -120,14 +120,51 @@ paran (c, f) n = f n (paran (c, f) (n-1))
 
 ------
 
-data ListF a = Nil | Cons Int a deriving Show
-type List = Fix ListF
+data ListF a r = Nil | Cons a r deriving (Show, Functor)
+type List a = Fix (ListF a)
 
-data SListF a = SNil | SCons Int a deriving Show
-type SList = Fix SListF
+nil :: List a
+nil = In Nil
 
-swap :: ListF (SListF a) -> SListF (ListF a)
-swap = undefined
+cons :: a -> List a -> List a
+cons x xs = In (Cons x xs)
 
-swop :: ListF (a, SListF a) -> SListF (Either a (ListF a))
+instance Show a => Show (List a) where
+  show (In Nil) = "Nil"
+  show (In (Cons x xs)) = "(Cons " ++ show x ++ " " ++ show xs ++ ")"
+  
+
+data SListF a r = SNil | SCons a r deriving (Show, Functor)
+type SList a = Fix (SListF a)
+
+snil :: SList a
+snil = In SNil
+
+scons :: a -> SList a -> SList a
+scons x xs = In (SCons x xs)
+
+instance Show a => Show (SList a) where
+  show (In SNil) = "SNil"
+  show (In (SCons x xs)) = "(SCons " ++ show x ++ " " ++ show xs ++ ")"
+
+----------------------------------------------------------------------------
+-- specialize
+type ListF' = ListF Int
+type SListF' = SListF Int
+
+swap :: ListF' (SListF' a) -> SListF' (ListF' a)
+swap Nil = SNil
+swap (Cons a SNil) = SCons a Nil
+swap (Cons a (SCons b x))
+  | a <= b         = SCons a (Cons b x)
+  | otherwise      = SCons b (Cons a x)
+
+naiveInsertSort' :: Fix (ListF Int) -> Fix (SListF Int)
+naiveInsertSort' = cata (ana (swap . fmap out))
+
+bubbleSort' :: Fix (ListF Int) -> Fix (SListF Int)
+bubbleSort' = ana (cata (fmap In . swap))
+
+swop :: ListF' (a, SListF' a) -> SListF' (Either a (ListF' a))
 swop = undefined
+
