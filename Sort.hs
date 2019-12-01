@@ -175,8 +175,8 @@ swop (Cons a (x, SCons b x'))
 insertSort' :: Fix (ListF Int) -> Fix (SListF Int)
 insertSort' = cata (apo (swop . fmap (pair (id, out))))
 
-selectSort :: Fix (ListF Int) -> Fix (SListF Int)
-selectSort = ana (para (fmap (either id In) . swop))
+selectSort' :: Fix (ListF Int) -> Fix (SListF Int)
+selectSort' = ana (para (fmap (either id In) . swop))
 
 -- Utilities
 toList :: [a] -> List a
@@ -187,3 +187,18 @@ fromList = unfoldr psi
   where
     psi (In Nil) = Nothing
     psi (In (Cons x xs)) = Just (x, xs)
+
+fromSList :: SList a -> [a]
+fromSList = unfoldr psi
+  where
+    psi (In SNil) = Nothing
+    psi (In (SCons x xs)) = Just (x, xs)
+
+sortBy :: Ord a => (List a -> SList a) -> [a] -> [a]
+sortBy sorter = fromSList . sorter . toList
+
+naiveInsertSort, bubbleSort, insertSort, selectSort :: [Int] -> [Int]
+naiveInsertSort = sortBy naiveInsertSort'
+bubbleSort = sortBy bubbleSort'
+insertSort = sortBy insertSort'
+selectSort = sortBy selectSort'
