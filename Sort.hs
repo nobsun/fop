@@ -166,5 +166,14 @@ bubbleSort' :: Fix (ListF Int) -> Fix (SListF Int)
 bubbleSort' = ana (cata (fmap In . swap))
 
 swop :: ListF' (a, SListF' a) -> SListF' (Either a (ListF' a))
-swop = undefined
+swop Nil = SNil
+swop (Cons a (x, SNil)) = SCons a (Left x)
+swop (Cons a (x, SCons b x'))
+  | a <= b              = SCons a (Left x)
+  | otherwise           = SCons b (Right (Cons a x'))
 
+insertSort' :: Fix (ListF Int) -> Fix (SListF Int)
+insertSort' = cata (apo (swop . fmap (pair (id, out))))
+
+selectSort :: Fix (ListF Int) -> Fix (SListF Int)
+selectSort = ana (para (fmap (either id In) . swop))
