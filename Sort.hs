@@ -23,7 +23,7 @@ import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString.Unsafe as B
 import System.IO (hPutStr, hPutStrLn, stdin, stdout, withFile, IOMode(..))
 
-swap (x, y) = (y, x)
+-- swap (x, y) = (y, x)
 pair (f, g) x = (f x, g x)
 cross (f, g) (x, y) = (f x, g y)
 
@@ -120,4 +120,14 @@ paran (c, f) n = f n (paran (c, f) (n-1))
 
 ------
 
-data ListF a = NilF | ListF a deriving Show
+data ListF a = Nil | Cons Int a deriving Show
+type List = Fix ListF
+
+data SListF a = SNil | SCons Int a deriving Show
+type SList = Fix SListF
+
+swap :: ListF (SListF a) -> SListF (ListF a)
+swap = undefined
+
+swop :: ListF (a, SListF a) -> SListF (Either a (ListF a))
+swop = undefined
