@@ -5,6 +5,10 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
+-- | A Duality of Sorts.
+--   by Ralf Henze.
+--   http://dreixel.net/research/pdf/ds.pdf
+-- 
 module Sort where
 
 import Control.Monad (replicateM, forM_)
