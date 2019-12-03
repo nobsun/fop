@@ -241,10 +241,10 @@ mergeTree' = ana (para (fmap (either id In) . merge))
 
 -- what's apomorphism
 maphd :: (a -> a) -> List a -> List a
-maphd f = apo psi . out
+maphd f = apo psi
   where
-    psi Nil = Nil
-    psi (Cons x xs) = Cons (f x) (Left xs)
+    psi (In Nil) = Nil
+    psi (In (Cons x xs)) = Cons (f x) (Left xs)
 
 maphd' :: (a -> a) -> List a -> List a
 maphd' f = para phi
