@@ -238,3 +238,16 @@ merge (Fork (l, SCons a l') (r, (SCons b r')))
 mergeTree, mergeTree' :: Tree Int -> SList Int
 mergeTree  = cata (apo (merge . fmap (pair (id, out))))
 mergeTree' = ana (para (fmap (either id In) . merge))
+
+-- what's apomorphism
+maphd :: (a -> a) -> List a -> List a
+maphd f = apo psi . out
+  where
+    psi Nil = Nil
+    psi (Cons x xs) = Cons (f x) (Left xs)
+
+maphd' :: (a -> a) -> List a -> List a
+maphd' f = para phi
+  where
+    phi Nil = nil
+    phi (Cons x (xs, _)) = cons (f x) xs
