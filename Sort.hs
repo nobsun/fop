@@ -217,6 +217,14 @@ data TreeF a r = Tip
 type Tree a = Fix (TreeF a)
 type TreeF' = TreeF Int
 
+tip :: Tree a
+tip = In Tip
+leaf :: a -> Tree a
+leaf a = In (Leaf a)
+fork :: Tree a -> Tree a -> Tree a
+fork l r = In (Fork l r)
+
+
 merge :: TreeF' (a, SListF' a) -> SListF' (Either a (TreeF' a))
 merge Tip                                      = SNil
 merge (Leaf a)                                 = SCons a (Right Tip)
