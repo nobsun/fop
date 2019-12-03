@@ -206,3 +206,23 @@ naiveInsertSort = sortBy naiveInsertSort'
 bubbleSort = sortBy bubbleSort'
 insertSort = sortBy insertSort'
 selectSort = sortBy selectSort'
+
+----------------------------------------------------------------------------
+
+data TreeF a r = Tip
+              | Leaf a
+              | Fork r r
+              deriving (Show, Functor)
+
+type Tree a = Fix (TreeF a)
+type TreeF' = TreeF Int
+
+merge :: TreeF' (a, SListF' a) -> SListF' (Either a (TreeF' a))
+merge Tip                                      = SNil
+merge (Leaf a)                                 = SCons a (Right Tip)
+merge (Fork (l, SNil)       (r, SNil))         = SNil
+merge (Fork (l, SNil)       (r, (SCons b r'))) = SCons b (Left r')
+merge (Fork (l, SCons a l') (r, SNil))         = SCons a (Left l')
+merge (Fork (l, SCons a l') (r, (SCons b r')))
+  | a <= b                                     = SCons a (Right (Fork l' r))
+  | otherwise                                  = SCons b (Right (Fork l r'))
