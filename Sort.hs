@@ -226,3 +226,7 @@ merge (Fork (l, SCons a l') (r, SNil))         = SCons a (Left l')
 merge (Fork (l, SCons a l') (r, (SCons b r')))
   | a <= b                                     = SCons a (Right (Fork l' r))
   | otherwise                                  = SCons b (Right (Fork l r'))
+
+mergeTree, mergeTree' :: Tree Int -> SList Int
+mergeTree  = cata (apo (merge . fmap (pair (id, out))))
+mergeTree' = ana (para (fmap (either id In) . merge))
