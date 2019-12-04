@@ -224,13 +224,6 @@ msingle x = In (MSingle x)
 mcons :: a -> MList a -> MList a
 mcons x xs = In (MCons x xs)
 
-grow :: MListF a (b, TreeF a b) -> TreeF a (Either b (MListF a b))
-grow MNil = Tip
-grow (MSingle x) = Leaf x
-grow (MCons x (t, Tip)) = Leaf x
-grow (MCons x (t, Leaf b)) = Fork (Right (MSingle x)) (Left t)
-grow (MCons x (t, Fork l r)) = Fork (Right (MCons x r)) (Left l)
-
 data TreeF a r = Tip
               | Leaf a
               | Fork r r
@@ -246,6 +239,16 @@ leaf a = In (Leaf a)
 fork :: Tree a -> Tree a -> Tree a
 fork l r = In (Fork l r)
 
+grow :: MListF a (b, TreeF a b) -> TreeF a (Either b (MListF a b))
+grow MNil                    = Tip
+grow (MSingle x)             = Leaf x
+grow (MCons x (t, Tip))      = Leaf x
+grow (MCons x (t, Leaf b))   = Fork (Right (MSingle x)) (Left t)
+grow (MCons x (t, Fork l r)) = Fork (Right (MCons x r)) (Left l)
+
+makeTree, makeTree' :: MList a -> Tree a
+makeTree  = cata (apo (grow . fmap (pair (id, out))))
+makeTree' = ana (para (fmap (either id In) . grow))
 
 merge :: TreeF' (a, SListF' a) -> SListF' (Either a (TreeF' a))
 merge Tip                                      = SNil
