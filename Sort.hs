@@ -214,6 +214,23 @@ data MListF a r = MNil
                 | MCons a r
                 deriving (Show, Functor)
 
+type MList a = Fix (MListF a)
+type MListF' = MListF Int
+
+mnil :: MList a
+mnil = In MNil
+msingle :: a -> MList a
+msingle x = In (MSingle x)
+mcons :: a -> MList a -> MList a
+mcons x xs = In (MCons x xs)
+
+grow :: MListF a (b, TreeF a b) -> TreeF a (Either b (MListF a b))
+grow MNil = Tip
+grow (MSingle x) = Leaf x
+grow (MCons x (t, Tip)) = Leaf x
+grow (MCons x (t, Leaf b)) = Fork (Right (MSingle x)) (Left t)
+grow (MCons x (t, Fork l r)) = Fork (Right (MCons x r)) (Left l)
+
 data TreeF a r = Tip
               | Leaf a
               | Fork r r
