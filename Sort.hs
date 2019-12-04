@@ -209,6 +209,11 @@ selectSort = sortBy selectSort'
 
 ----------------------------------------------------------------------------
 
+data MListF a r = MNil
+                | MSingle a
+                | MCons a r
+                deriving (Show, Functor)
+
 data TreeF a r = Tip
               | Leaf a
               | Fork r r
