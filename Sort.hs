@@ -276,3 +276,19 @@ maphd' f = para phi
   where
     phi Nil = nil
     phi (Cons x (xs, _)) = cons (f x) xs
+
+mergeSort, mergeSort', mergeSort'', mergeSort''' :: MList Int -> SList Int
+mergeSort    = mergeTree  . makeTree
+mergeSort'   = mergeTree  . makeTree'
+mergeSort''  = mergeTree' . makeTree
+mergeSort''' = mergeTree' . makeTree'
+
+toMList :: [a] -> MList a
+toMList = foldr mcons mnil
+
+fromMList :: MList a -> [a]
+fromMList = unfoldr psi
+  where
+    psi (In MNil) = Nothing
+    psi (In (MSingle x)) = Just (x, mnil)
+    psi (In (MCons x xs)) = Just (x, xs)
