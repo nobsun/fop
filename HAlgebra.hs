@@ -90,3 +90,21 @@ type ExprWithAnn a = Fix (CofreeF ExprF a)
 -- cofree annotation
 type Cofree f a = Fix (CofreeF f a)
 
+--------------------------------------------------
+
+newtype f :~> g = Nat { unNat :: forall i. f i -> g i }
+
+instance Category (:~>) where
+  id = Nat Prelude.id
+  Nat f . Nat g = Nat (f Prelude.. g)
+
+-- | Higher order functor
+--
+-- > hfmap id = id
+-- > hfmap f . hfmap g = hfmap (f . g)
+--
+class HFunctor (f :: (k -> Type) -> (k -> Type)) where
+  hfmap :: (a :~> b) -> (f a :~> f b)
+
+hfmapLack :: HFunctor f => a :~> b -> f a i -> f b i
+hfmapLack f = unNat (hfmap f)
