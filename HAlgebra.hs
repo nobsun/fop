@@ -108,3 +108,33 @@ class HFunctor (f :: (k -> Type) -> (k -> Type)) where
 
 hfmapLack :: HFunctor f => a :~> b -> f a i -> f b i
 hfmapLack f = unNat (hfmap f)
+
+-- | sample
+data ICListF r i where
+  IConsF :: Int -> r Char -> ICListF r Int
+  CConsF :: Char -> r Int -> ICListF r Char
+  ICNilF :: ICListF r i
+
+instance HFunctor ICListF where
+  hfmap (Nat f) = Nat \case
+    IConsF x m -> IConsF x (f m)
+    CConsF x m -> CConsF x (f m)
+    ICNilF     -> ICNilF
+
+
+newtype HFix f i = HIn { hout :: f (HFix f) i }
+
+hcata :: HFunctor f => (f b :~> b) -> (HFix f :~> b)
+hcata f = go
+  where
+    go = f . hfmap go . Nat hout
+
+type HFBICList = HFix ICListF
+
+hcataHFBICList :: (ICListF b :~> b) -> (HFBICList :~> b)
+hcataHFBICList = hcata
+
+deriving instance (forall i. Show (r i)) => Show (ICListF r j)
+deriving instance (forall r j. (forall i. Show (r i)) => Show (f r j)) => Show (HFix f k)
+
+--------------------------------------------------
