@@ -17,7 +17,8 @@ extra-source-files:  CHANGELOG.md, README.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     HAlgebraAst
+  exposed-modules:     OpenUnion
+                       HAlgebraAst
                        HAlgebra
                        Hylo
                        Sort
@@ -26,6 +27,7 @@ library
   build-depends:       base >=4.12 && <4.13
                      , bytestring
                      , containers
+                     , extensible
                      , vector
   -- hs-source-dirs:
   default-language:    Haskell2010
