@@ -52,3 +52,10 @@ instance (Eval f, Eval g) => Eval (f :+: g) where
 
 eval :: Eval f => Expr f -> Int
 eval expr = foldExpr evalAlgebra expr
+
+val :: Int -> Expr Val
+val x = In (Val x)
+
+infixl 6 .+.
+(.+.) :: Expr Add -> Expr Add -> Expr Add
+x .+. y = In (Add x y)
