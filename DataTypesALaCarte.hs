@@ -1,4 +1,6 @@
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances #-}
 -- | ref.) http://www.cs.ru.nl/~W.Swierstra/Publications/DataTypesALaCarte.pdf
 module DataTypesALaCarte where
 {--
@@ -59,3 +61,13 @@ val x = In (Val x)
 infixl 6 .+.
 (.+.) :: Expr Add -> Expr Add -> Expr Add
 x .+. y = In (Add x y)
+
+class (Functor sub, Functor sup) => sub :<: sup where
+  inj :: sub a -> sup a
+
+instance Functor f => f :<: f where
+  inj = id
+instance (Functor f, Functor g) => f :<: (f :+: g) where
+  inj = Inl
+instance (Functor f, Functor g, Functor h, f :<: g) => f :<: (h :+: g) where
+  inj = Inr . inj
