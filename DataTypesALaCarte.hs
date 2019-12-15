@@ -1,6 +1,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
 -- | ref.) http://www.cs.ru.nl/~W.Swierstra/Publications/DataTypesALaCarte.pdf
 module DataTypesALaCarte where
 {--
@@ -55,12 +56,12 @@ instance (Eval f, Eval g) => Eval (f :+: g) where
 eval :: Eval f => Expr f -> Int
 eval expr = foldExpr evalAlgebra expr
 
-val :: Int -> Expr Val
-val x = In (Val x)
+-- val :: Int -> Expr Val
+-- val x = In (Val x)
 
-infixl 6 .+.
-(.+.) :: Expr Add -> Expr Add -> Expr Add
-x .+. y = In (Add x y)
+-- infixl 6 .+.
+-- (.+.) :: Expr Add -> Expr Add -> Expr Add
+-- x .+. y = In (Add x y)
 
 class (Functor sub, Functor sup) => sub :<: sup where
   inj :: sub a -> sup a
@@ -71,3 +72,12 @@ instance (Functor f, Functor g) => f :<: (f :+: g) where
   inj = Inl
 instance (Functor f, Functor g, Functor h, f :<: g) => f :<: (h :+: g) where
   inj = Inr . inj
+
+inject :: (g :<: f) => g (Expr f) -> Expr f
+inject = In . inj
+val :: (Val :<: f) => Int -> Expr f
+val x = inject (Val x)
+
+infixl 6 .+.
+(.+.) :: (Add :<: f) => Expr f -> Expr f -> Expr f
+x .+. y = inject (Add x y)
