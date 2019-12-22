@@ -168,3 +168,4 @@ uncats (x:xs) = ([x], xs) : map (cons x) (uncats xs)
   where cons x (ys, zs) = (x:ys, zs)
 
 ex1 = mkNexus id concat "abcd"
+ex2 = mkNexus id concat "abcde"
