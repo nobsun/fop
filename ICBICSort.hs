@@ -11,16 +11,14 @@ tracing wk = if debug then trace (show wk) wk else wk
 -- I Can't Believe It Can Sort Algorithm.
 icbics :: (Show a, Ord a) => [a] -> [a]
 icbics xs = go ([], xs)
-  where
-    go (xs, []) = xs
-    go xys      = go (swapper xys)
+  where go (xs, []) = xs
+        go xys      = go (swapper xys)
 
 swapper :: (Show a, Ord a) => ([a], [a]) -> ([a], [a])
 swapper (xs, y:ys) = tracing tmp
-  where
-    tmp = (zs++[w], ws)
-    (z, zs) = swp (y:xs)
-    (w, ws) = swp (z:ys)
+  where tmp = (zs++[w], ws)
+        (z, zs) = swp (y:xs)
+        (w, ws) = swp (z:ys)
 
 swp :: Ord a => [a] -> (a, [a])
 swp (x:xs) = case span (<x) xs of
