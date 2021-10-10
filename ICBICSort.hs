@@ -5,19 +5,18 @@ import Debug.Trace (trace)
 
 debug = True
 
-tracing :: Show a => a -> a
-tracing wk = if debug then trace (show wk) wk else wk
+tracing :: Show a => (a -> b) -> a -> b
+tracing f x = if debug then trace (show x) (f x) else f x
 
 -- I Can't Believe It Can Sort Algorithm.
 icbics :: (Show a, Ord a) => [a] -> [a]
-icbics xs = go ([], xs)
+icbics xs = tracing go ([], xs)
   where go (xs, []) = xs
-        go xys      = go (swapper xys)
+        go xys      = tracing go (swapper xys)
 
 swapper :: (Show a, Ord a) => ([a], [a]) -> ([a], [a])
-swapper (xs, y:ys) = tracing tmp
-  where tmp = (zs++[w], ws)
-        (z, zs) = swp (y:xs)
+swapper (xs, y:ys) = (zs++[w], ws)
+  where (z, zs) = swp (y:xs)
         (w, ws) = swp (z:ys)
 
 swp :: Ord a => [a] -> (a, [a])
