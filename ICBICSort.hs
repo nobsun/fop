@@ -16,13 +16,13 @@ icbics xs = go $? ([], xs)
 
 swapper :: Ord a => ([a], [a]) -> ([a], [a])
 swapper (xs, y:ys) = (zs++[w], ws)
-  where (z, zs) = swp (y:xs)
-        (w, ws) = swp (z:ys)
+  where (z, zs) = bumper (y:xs)
+        (w, ws) = bumper (z:ys)
 
-swp :: Ord a => [a] -> (a, [a])
-swp (x:xs) = case span (<x) xs of
+bumper :: Ord a => [a] -> (a, [a])
+bumper (x:xs) = case span (<x) xs of
   (xs',  []) -> (x, xs)
   (xs', ys') -> (z, xs'++[x]++zs)
-    where (z, zs) = swp ys'
+    where (z, zs) = bumper ys'
 
 sample = [1,3,2,5,4,7,6,0]
