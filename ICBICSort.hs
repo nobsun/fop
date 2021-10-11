@@ -12,7 +12,7 @@ f $? x = if debug then trace (show x) (f x) else f x
 icbics :: (Show a, Ord a) => [a] -> [a]
 icbics xs = go $? ([], xs)
   where go (xs, []) = xs
-        go xys      = go $? (swapper xys)
+        go xys      = go $? swapper xys
 
 swapper :: Ord a => ([a], [a]) -> ([a], [a])
 swapper (xs, y:ys) = (zs++[w], ws)
@@ -20,9 +20,9 @@ swapper (xs, y:ys) = (zs++[w], ws)
         (w, ws) = swp (z:ys)
 
 swp :: Ord a => [a] -> (a, [a])
-swp (x:xs) = case span (<x) xs of
-  (xs',  []) -> (x, xs)
-  (xs', ys') -> (z, xs'++[x]++zs)
+swp xxs@(x:_) = case break (x<) xxs of
+  (xs',  []) -> (x, tail xxs)
+  (xs', ys') -> (z, tail xs'++[x]++zs)
     where (z, zs) = swp ys'
 
 sample = [1,3,2,5,4,7,6,0]
