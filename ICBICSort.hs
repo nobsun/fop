@@ -21,7 +21,7 @@ swapper (xs, y:ys) = (zs++[w], ws)
 
 swp :: Ord a => [a] -> (a, [a])
 swp xxs@(x:_) = case break (x<) xxs of
-  (xs',  []) -> (x, tail xxs)
+  (xs',  []) -> (x, tail xs')
   (xs', ys') -> (z, tail xs'++[x]++zs)
     where (z, zs) = swp ys'
 
