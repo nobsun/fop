@@ -10,12 +10,11 @@ f $? x = if debug then trace (show x) (f x) else f x
 
 -- I Can't Believe It Can Sort Algorithm.
 icbics :: (Show a, Ord a) => [a] -> [a]
-icbics xs = go $? ([], xs)
-  where go (xs, []) = xs
-        go xys      = go $? swapper xys
+icbics xs = swapper $? ([], xs)
 
-swapper :: Ord a => ([a], [a]) -> ([a], [a])
-swapper (xs, y:ys) = (zs++[w], ws)
+swapper :: (Show a, Ord a) => ([a], [a]) -> [a]
+swapper (xs,   []) = xs
+swapper (xs, y:ys) = swapper $? (zs++[w], ws)
   where (z, zs) = swp (y:xs)
         (w, ws) = swp (z:ys)
 
