@@ -110,7 +110,7 @@ dyna :: Functor f => (f (Cofree f b) -> b) -> (a -> f a) -> a -> b
 dyna f g = chrono f (fmap inject . g) -- histo f . ana g
 -- codynamorphism
 codyna :: Functor f => (f b -> b) -> (a -> f (Free f a)) -> a -> b
-codyna f g = chrono (f . fmap extract) g
+codyna f {-g-} = chrono (f . fmap extract) {-g-}
 -- mutumorphism
 mutu :: Functor f => (a -> b) -> (f a -> a) -> Fix f -> b
 mutu proj phi = proj . cata phi
