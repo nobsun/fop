@@ -30,6 +30,9 @@ import System.IO (hPutStr, hPutStrLn, stdin, stdout, withFile, IOMode(..))
 ($?) :: Show a => (a -> a) -> a -> a
 f $? x = trace (show x) (f x)
 
+tr :: Show a => String -> a -> a
+tr msg x = trace (msg++show x) x
+
 -- swap (x, y) = (y, x)
 pair (f, g) x = (f x, g x)
 cross (f, g) (x, y) = (f x, g y)
@@ -159,12 +162,12 @@ instance Show a => Show (SList a) where
 type ListF' = ListF Int
 type SListF' = SListF Int
 
-swap :: ListF' (SListF' a) -> SListF' (ListF' a)
-swap Nil = SNil
-swap (Cons a SNil) = SCons a Nil
+swap :: Show a => ListF' (SListF' a) -> SListF' (ListF' a)
+swap Nil = tr " => " SNil
+swap (Cons a SNil) = tr " => " $ SCons a Nil
 swap (Cons a (SCons b x))
-  | a <= b         = SCons a (Cons b x)
-  | otherwise      = SCons b (Cons a x)
+  | a <= b         = tr " => " $ SCons a (Cons b x)
+  | otherwise      = tr " => " $ SCons b (Cons a x)
 
 naiveInsertSort' :: Fix (ListF Int) -> Fix (SListF Int)
 naiveInsertSort' = cata (ana (swap . fmap out))

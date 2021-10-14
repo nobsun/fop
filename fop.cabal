@@ -17,8 +17,8 @@ extra-source-files:  CHANGELOG.md, README.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Sort
-                       ICBICSort
+  exposed-modules:     ICBICSort
+                       Sort
                        DataTypesALaCarte
                        OpenUnion
                        HAlgebraAst
