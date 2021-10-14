@@ -17,13 +17,13 @@ extra-source-files:  CHANGELOG.md, README.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     ICBICSort
+  exposed-modules:     Sort
+                       ICBICSort
                        DataTypesALaCarte
                        OpenUnion
                        HAlgebraAst
                        HAlgebra
                        Hylo
-                       Sort
   -- other-modules:
   -- other-extensions:
   build-depends:       base >=4.12 && <4.16

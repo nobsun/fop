@@ -1,8 +1,6 @@
 {-# OPTIONS_GHC -O2 #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DeriveFunctor #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 -- | A Duality of Sorts.
@@ -10,6 +8,8 @@
 --   http://dreixel.net/research/pdf/ds.pdf
 -- 
 module Sort where
+
+import Debug.Trace (trace)
 
 import Control.Monad (replicateM, forM_)
 import Data.Bool (bool)
@@ -27,13 +27,16 @@ import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString.Unsafe as B
 import System.IO (hPutStr, hPutStrLn, stdin, stdout, withFile, IOMode(..))
 
+($?) :: Show a => (a -> a) -> a -> a
+f $? x = trace (show x) (f x)
+
 -- swap (x, y) = (y, x)
 pair (f, g) x = (f x, g x)
 cross (f, g) (x, y) = (f x, g y)
 
 newtype Fix f = In { out :: f (Fix f) }
 
-data Hisx f a x = Hisx { unHisx :: (a, f x) } deriving (Show, Functor)
+newtype Hisx f a x = Hisx { unHisx :: (a, f x) } deriving (Show, Functor)
 newtype Cofree f a = Cf { unCf :: Fix (Hisx f a) }
 instance Functor f => Functor (Cofree f) where
   fmap f = Cf . ana (phi . out) . unCf
@@ -47,7 +50,7 @@ sub :: Functor f => Cofree f a -> f (Cofree f a)
 sub cf = case out (unCf cf) of
   Hisx (_, b) -> fmap Cf b
 
-data Futx f a x = Futx { unFutx :: Either a (f x) } deriving (Show, Functor)
+newtype Futx f a x = Futx { unFutx :: Either a (f x) } deriving (Show, Functor)
 newtype Free f a = Fr { unFr :: Fix (Futx f a) }
 instance Functor f => Functor (Free f) where
   fmap f = Fr . cata (In . phi) . unFr
@@ -251,14 +254,14 @@ makeTree  = cata (apo (grow . fmap (pair (id, out))))
 makeTree' = ana (para (fmap (either id In) . grow))
 
 merge :: TreeF' (a, SListF' a) -> SListF' (Either a (TreeF' a))
-merge Tip                                      = SNil
-merge (Leaf a)                                 = SCons a (Right Tip)
-merge (Fork (l, SNil)       (r, SNil))         = SNil
-merge (Fork (l, SNil)       (r, (SCons b r'))) = SCons b (Left r')
-merge (Fork (l, SCons a l') (r, SNil))         = SCons a (Left l')
-merge (Fork (l, SCons a l') (r, (SCons b r')))
-  | a <= b                                     = SCons a (Right (Fork l' r))
-  | otherwise                                  = SCons b (Right (Fork l r'))
+merge Tip                                    = SNil
+merge (Leaf a)                               = SCons a (Right Tip)
+merge (Fork (l, SNil)       (r, SNil))       = SNil
+merge (Fork (l, SNil)       (r, SCons b r')) = SCons b (Left r')
+merge (Fork (l, SCons a l') (r, SNil))       = SCons a (Left l')
+merge (Fork (l, SCons a l') (r, SCons b r'))
+  | a <= b                                   = SCons a (Right (Fork l' r))
+  | otherwise                                = SCons b (Right (Fork l r'))
 
 mergeTree, mergeTree' :: Tree Int -> SList Int
 mergeTree  = cata (apo (merge . fmap (pair (id, out))))
