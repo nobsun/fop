@@ -1,5 +1,8 @@
 -- ref.) https://arxiv.org/pdf/2110.01111.pdf
-module ICBICSort where
+module ICBICSort
+  ( sort
+  , sortBy
+  ) where
 
 import Debug.Trace (trace)
 
@@ -9,19 +12,33 @@ debug = True
 f $? x = if debug then trace (show x) (f x) else f x
 
 -- I Can't Believe It Can Sort Algorithm.
-icbics :: (Show a, Ord a) => [a] -> [a]
-icbics xs = swapper $? ([], xs)
+sort :: (Show a, Ord a) => [a] -> [a]
+sort = sortBy (<)
+
+sortBy :: (Show a, Ord a) => (a -> a -> Bool) -> [a] -> [a]
+sortBy cmp xs = swapperBy cmp $? ([], xs)
 
 swapper :: (Show a, Ord a) => ([a], [a]) -> [a]
-swapper (xs,   []) = xs
-swapper (xs, y:ys) = swapper $? (zs++[w], ws)
-  where (z, zs) = swp (y:xs)
-        (w, ws) = swp (z:ys)
+swapper = swapperBy (<)
+
+swapperBy :: (Show a, Ord a) => (a -> a -> Bool) -> ([a], [a]) -> [a]
+swapperBy cmp (xs,   []) = xs
+swapperBy cmp (xs, y:ys) = swapperBy cmp $? (zs++[w], ws)
+  where (z, zs) = swpBy cmp (y:xs)
+        (w, ws) = swpBy cmp (z:ys)
 
 swp :: Ord a => [a] -> (a, [a])
-swp (x:xs) = case break (x<) xs of
+swp = swpBy (<)
+
+swpBy :: Ord a => (a -> a -> Bool) -> [a] -> (a, [a])
+swpBy cmp xxs@(x:_) = case break (x `cmp`) xs of
   (xs, []) -> (x, xs)
   (xs, ys) -> (z, xs++[x]++zs)
-    where (z, zs) = swp ys
+    where (z, zs) = swpBy cmp ys
 
 sample = [1,3,2,5,4,7,6,0]
+
+-- | please check!
+-- import Data.Function (on)
+-- sortBy ((<) `on` fst) sample2
+sample2 = [(3,0), (3,1), (1,2)]
